@@ -39,7 +39,7 @@ const ShopSettings = () => {
       })
       .then((res) => {
         dispatch(loadSeller());
-        toast.success("Avatar updated successfully!");
+        toast.success("Cập nhật ảnh đại diện thành công!");
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -125,7 +125,7 @@ const ShopSettings = () => {
               placeholder={`${
                 seller?.description
                   ? seller.description
-                  : "Enter your shop description"
+                  : "Nhập mô tả cửa hàng của bạn"
               }`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}

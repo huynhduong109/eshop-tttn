@@ -66,7 +66,7 @@ const ProfileContent = ({ active }) => {
       })
       .then((response) => {
         dispatch(loadUser());
-        toast.success("avatar updated successfully!");
+        toast.success("Cập nhật ảnh đại diện thành công!");
       })
       .catch((error) => {
         toast.error(error);

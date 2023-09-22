@@ -27,6 +27,9 @@ const ProductCard = ({ data, isEvent }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const discountPercentage = data.originalPrice
+    ? ((data.originalPrice - data.discountPrice) / data.originalPrice) * 100
+    : 0;
 
   useEffect(() => {
     if (wishlist && wishlist.find((i) => i._id === data._id)) {
@@ -52,7 +55,7 @@ const ProductCard = ({ data, isEvent }) => {
       toast.error("Sản phẩm đã có trong giỏ hàng");
     } else {
       if (data.stock < 1) {
-        toast.error("Số lượng sản phẩm có hạn!");
+        toast.error("Sản phẩm hiện hết hàng!");
       } else {
         const cartData = { ...data, qty: 1 };
         dispatch(addTocart(cartData));
@@ -63,14 +66,21 @@ const ProductCard = ({ data, isEvent }) => {
 
   return (
     <>
-      <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+      <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer transform transition-transform hover:translate-y-[-5px] hover:shadow-md transition-shadow">
+        <div className="discount-percentage">
+          {discountPercentage > 0 && (
+            <span className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 rounded-tl-md">
+              -{discountPercentage.toFixed(0)}%
+            </span>
+          )}
+        </div>
+
         <div className="flex justify-end"></div>
         <Link
-          to={`${
-            isEvent === true
-              ? `/product/${data._id}?isEvent=true`
-              : `/product/${data._id}`
-          }`}>
+          to={`${isEvent === true
+            ? `/product/${data._id}?isEvent=true`
+            : `/product/${data._id}`
+            }`}>
           <img
             src={`${backend_url}${data.images && data.images[0]}`}
             alt=""
@@ -81,11 +91,10 @@ const ProductCard = ({ data, isEvent }) => {
           <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
         </Link>
         <Link
-          to={`${
-            isEvent === true
-              ? `/product/${data._id}?isEvent=true`
-              : `/product/${data._id}`
-          }`}>
+          to={`${isEvent === true
+            ? `/product/${data._id}?isEvent=true`
+            : `/product/${data._id}`
+            }`}>
           <h4 className="pb-3 font-[500]">
             {data.name.length > 40 ? data.name.slice(0, 40) + "..." : data.name}
           </h4>
@@ -96,46 +105,35 @@ const ProductCard = ({ data, isEvent }) => {
               {data?.sold_out} đã bán
             </span>
           </div>
-
-          {/* <div className="py-2 flex items-center justify-between">
-            <div className="flex">
-              <h5 className={`${styles.productDiscountPrice}`}>
-                {data.originalPrice === 0
-                  ? data.originalPrice
-                  : data.discountPrice}
-                $
-              </h5>
-              <h4 className={`${styles.price}`}>
-                {data.originalPrice ? data.originalPrice + " $" : null}
-              </h4>
-            </div>
-            <span className="font-[400] text-[17px] text-[#68d284]">
-              {data?.sold_out} sold
-            </span>
-          </div> */}
           <div className="py-2 flex items-center justify-between">
-            <div className="flex">
-              <h5 className={`${styles.productDiscountPrice}`}>
-                {data.originalPrice === 0
-                  ? data.originalPrice
-                  : data.discountPrice
-                  ? data.discountPrice.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }) + ""
-                  : null}
-              </h5>
-              <h4 className={`${styles.price}`}>
-                {/* {data.originalPrice ? data.originalPrice + " $" : null} */}
-                {data.originalPrice
-                  ? data.originalPrice.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }) + ""
-                  : null}
-              </h4>
-            </div>
-          </div>
+    <div className="flex flex-col space-x-2 space-y-1"> {/* Container div */}
+      <div className="flex">
+        <h5 className={`${styles.productDiscountPrice}`}>
+          {data.originalPrice === 0
+            ? data.originalPrice
+            : data.discountPrice
+              ? data.discountPrice.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }) + ""
+              : null}
+        </h5>
+        <h4 className={`${styles.price}`}>
+          {data.originalPrice
+            ? data.originalPrice.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }) + ""
+            : null}
+        </h4>
+      </div>
+    </div>
+    
+    
+  </div>
+  <div><h6 className="text-right text-xs text-gray-500 mb-0">
+      {data.shop.address}
+    </h6></div>
         </Link>
 
         {/* side options */}
